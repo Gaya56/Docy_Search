@@ -13,12 +13,27 @@ This project is a **modular, intelligent tool recommendation system** designed t
 - **Comparative Analysis**: Side-by-side tool comparisons
 - **Task-Specific Recommendations**: Curated suggestions for specific development workflows
 
+### GitHub Integration
+
+- **Repository Discovery**: Search for official GitHub repositories of recommended tools
+- **Code Examples**: Access real implementation examples and setup files
+- **Project Structure Analysis**: View repository structure and key files
+- **Direct Links**: Get direct links to GitHub repositories and documentation
+- **Permission-Based Access**: Secure GitHub integration with user consent
+
 ### Development Tool Discovery
 
 - **Multi-Category Support**: Web development, mobile apps, desktop applications, databases, DevOps, testing, design, data science, AI/ML, game development, security, and productivity tools
 - **Framework Recommendations**: React, Vue.js, Angular, Django, Flask, Express.js, and more
 - **Tool Comparison**: Side-by-side analysis of similar tools
 - **Technology Stack Guidance**: Complete toolchain recommendations for specific project types
+
+### Project Context Awareness
+
+- **Smart Context Loading**: Automatically loads your project details from `project_context.md`
+- **Targeted Recommendations**: Suggests tools based on your specific tech stack, challenges, and goals
+- **Budget-Aware Suggestions**: Considers your budget constraints and preferences
+- **Skill-Level Appropriate**: Recommendations matched to your experience level
 
 ### Multi-AI Support
 
@@ -32,14 +47,16 @@ This project is a **modular, intelligent tool recommendation system** designed t
 Built on **Pydantic AI** and **Model Context Protocol (MCP)** for clean, modular design:
 
 ```text
-app.py                          # Main chat interface
+app.py                          # Main chat interface with project context loading
 tool_recommendation/
 └── mcp_server.py              # 🆕 Intelligent tool discovery & analysis
-brave_search.py                 # Brave API integration
-python_tools.py                 # Data processing utilities
+github_mcp_server.py           # 🆕 GitHub repository integration
+brave_search.py                # Brave API integration
+python_tools.py                # Data processing utilities
+project_context.md             # Your project details (auto-loaded)
 ```
 
-**Current Status:** Fully operational system with intelligent tool recommendation, multi-AI support, interactive chat with permission prompts, and comprehensive development tool analysis capabilities. The tool recommendation engine provides smart suggestions for web development, mobile development, DevOps, databases, testing frameworks, and more.
+**Current Status:** Fully operational system with intelligent tool recommendation, GitHub integration, multi-AI support, interactive chat with permission prompts, project context awareness, and comprehensive development tool analysis capabilities.
 
 ## 🚀 Quick Start
 
@@ -62,6 +79,9 @@ Create a `.env` file with your API keys:
 # Required for tool recommendation system
 BRAVE_API_KEY=your_brave_search_api_key
 GOOGLE_API_KEY=your_gemini_api_key
+
+# Required for GitHub integration
+GITHUB_TOKEN=your_github_token
 
 # Optional: Choose your preferred AI model
 AI_MODEL=gemini  # Options: openai, claude, gemini, deepseek
@@ -88,7 +108,13 @@ The assistant will automatically load this context and provide more targeted rec
 
 ```bash
 # Test tool recommendation functionality
-python test_tool_recommendation.py
+python tests/test_tool_recommendation.py
+
+# Test GitHub integration
+python tests/test_github_server.py
+
+# Run demo examples
+python demos/demo_tool_recommendation.py
 
 # Start the interactive chat
 python app.py
@@ -109,6 +135,16 @@ User: "How do I set up a Django project?"
 Bot: I'll generate step-by-step setup instructions for Django development...
 ```
 
+### GitHub Integration
+
+```text
+User: "Find the official React repository and show me setup examples"
+Bot: I can search GitHub repositories for React setup examples. This will access public GitHub data to find official repositories and code examples. Continue? (y/n)
+
+User: "y"
+Bot: [Shows React repository details, stars, and relevant setup files]
+```
+
 ### Development Workflows
 
 ```text
@@ -119,14 +155,13 @@ User: "Set up a complete full-stack development environment"
 Bot: I'll suggest tools and provide setup instructions for frontend, backend, and database tools...
 ```
 
-### Task-Specific Workflows
+### Project Context-Aware Recommendations
 
 ```text
-User: "What tools should a beginner use for web development?"
-Bot: I'll recommend beginner-friendly web development tools with installation guides...
-
-User: "Best DevOps tools for small teams"
-Bot: I'll suggest DevOps tools suitable for small development teams...
+User: "What tools would be best for this project?"
+Bot: ✅ I have your project context loaded and ready to help!
+     Based on your task management app with React + Node.js + PostgreSQL...
+     [Provides targeted recommendations for your specific stack and challenges]
 ```
 
 ## 🔧 Advanced Features
@@ -169,16 +204,31 @@ Each tool recommendation includes:
 
 ```text
 Docy_Search/
-├── app.py                              # Main application
-├── test_tool_recommendation.py         # Test script
-├── demo_tool_recommendation.py         # Demo script
-├── Tool_Recommendation_Guide.md        # Detailed usage guide
-├── requirements.txt                    # Dependencies
-├── .env                               # API keys (create this)
-├── tool_recommendation/
-│   └── mcp_server.py                  # Core recommendation engine
+├── app.py                              # Main application with context loading
+├── github_mcp_server.py               # GitHub repository integration
 ├── brave_search.py                    # Search API integration
-└── python_tools.py                   # Utility functions
+├── python_tools.py                    # Utility functions
+├── project_context.md                 # Your project details (auto-loaded)
+├── requirements.txt                   # Dependencies
+├── .env                              # API keys (create this)
+├── tool_recommendation/
+│   ├── mcp_server.py                 # Core recommendation engine
+│   ├── search_engine.py              # Search functionality
+│   ├── analyzer.py                   # AI analysis tools
+│   ├── installer.py                  # Installation guides
+│   ├── core.py                       # Core logic
+│   └── models.py                     # Data models
+├── tests/
+│   ├── test_tool_recommendation.py   # Tool recommendation tests
+│   └── test_github_server.py         # GitHub integration tests
+├── demos/
+│   ├── demo_tool_recommendation.py   # Demo script
+│   └── demo_tool_recommendation_fixed.py
+└── Docs/
+    ├── Tool_Recommendation_Guide.md   # Detailed usage guide
+    ├── IMPLEMENTATION_SUMMARY.md      # Technical implementation details
+    ├── project_context_example.md     # Example project context
+    └── Workflow.md                    # Development workflow
 ```
 
 ## 🤝 Contributing
@@ -186,9 +236,33 @@ Docy_Search/
 This project uses a modular MCP (Model Context Protocol) architecture. To add new functionality:
 
 1. Create new MCP server in appropriate directory
-2. Follow the existing pattern (see `tool_recommendation/mcp_server.py`)
+2. Follow the existing pattern (see `tool_recommendation/mcp_server.py` or `github_mcp_server.py`)
 3. Add server to `app.py`
 4. Update system prompt if needed
 
-For detailed usage examples, see `Tool_Recommendation_Guide.md`.
+### Key Components:
+
+- **MCP Servers**: Modular tools for specific functionality (tool search, GitHub integration, etc.)
+- **Project Context**: Automatic loading of user project details for targeted recommendations
+- **Permission System**: User consent required for external API calls (GitHub, web search)
+- **Multi-AI Support**: Flexible AI model selection for different use cases
+
+For detailed usage examples, see `Docs/Tool_Recommendation_Guide.md`.
+
+## 🎯 System Capabilities
+
+### ✅ Fully Implemented Features:
+
+- **🔍 Tool Discovery**: Live web search with AI-powered analysis
+- **📊 Smart Rankings**: Multi-criteria tool evaluation and comparison
+- **📚 Installation Guides**: Automatic generation of setup instructions
+- **🐙 GitHub Integration**: Repository search, code examples, and project analysis
+- **🎯 Context Awareness**: Project-specific recommendations based on your details
+- **🔐 Permission System**: Secure API access with user consent
+- **🤖 Multi-AI Support**: OpenAI, Claude, Gemini, and DeepSeek compatibility
+- **📱 Category Support**: Web, mobile, desktop, database, DevOps, testing, design, data science, AI/ML, game development, security, productivity
+
+### 🚀 Ready to Use:
+
+Your intelligent development assistant is ready to help with tool discovery, GitHub repository analysis, and project-specific recommendations. Simply run `python app.py` and start asking questions about development tools!
 
