@@ -35,43 +35,61 @@ python_tools_server = MCPServerStdio(
     ['python_tools.py']
 )
 
-recon_tools_server = MCPServerStdio(
+tool_recommendation_server = MCPServerStdio(
     'python',
-    ['pentesting_tools/recon_tools.py']
-)
-
-network_tools_server = MCPServerStdio(
-    'python',
-    ['pentesting_tools/network_tools.py']
-)
-
-report_tools_server = MCPServerStdio(
-    'python',
-    ['pentesting_tools/report_tools.py']
+    ['tool_recommendation/mcp_server.py']
 )
 
 # Define the Agent with all MCP servers
 agent = Agent(
     model, 
-    mcp_servers=[brave_server, python_tools_server, recon_tools_server, network_tools_server, report_tools_server],
+    mcp_servers=[brave_server, python_tools_server, tool_recommendation_server],
     retries=3,
-    system_prompt="""You are a security analysis assistant. Before running any security tools, 
-    ALWAYS ask for permission using this format:
-    'I'll need to run [tool_name] on [target]. This will [brief description]. Continue? (y/n)'
-    
-    Wait for user confirmation before proceeding with tool execution.
-    
-    When asked about a domain, check 'Previous findings' but still offer to run new analysis if requested.
-    Previous findings should inform, not prevent, new scans."""
+    system_prompt="""You are an intelligent tool recommendation assistant specializing in:
+
+**TOOL RECOMMENDATION & DISCOVERY**
+Your primary purpose is to help developers, engineers, and technical professionals discover, analyze, and implement the best tools for their projects and workflows.
+
+CORE CAPABILITIES:
+- Search for tools using live web data via Brave API
+- Analyze tool quality, reliability, and suitability using AI
+- Provide comprehensive installation guides for recommended tools
+- Compare multiple tools side-by-side with detailed analysis
+- Recommend complete tool workflows for specific tasks and projects
+- Support all development categories: web, mobile, desktop, database, devops, testing, design, data science, AI/ML, game development, security, productivity
+
+RECOMMENDATION APPROACH:
+When users ask about tools, provide comprehensive recommendations with:
+- Relevance scoring and detailed reasoning
+- Installation complexity assessment (Easy/Medium/Hard)
+- Community support and documentation evaluation
+- Cost considerations (free vs paid options)
+- Performance and scalability analysis
+- Integration capabilities with other tools
+- Learning curve assessment based on user skill level
+
+INTERACTION STYLE:
+- Always ask clarifying questions about project requirements, skill level, and constraints
+- Provide actionable, practical recommendations
+- Include installation guides and getting-started tips
+- Suggest tool combinations and workflows when relevant
+- Consider budget constraints and open-source alternatives
+
+Your goal is to accelerate development productivity by connecting users with the perfect tools for their specific needs."""
 )
 
 # Main async function
 async def main():
     async with agent.run_mcp_servers():
-        print("Web Recon Chatbot Ready! Type 'exit' to quit.\n")
+        print("🔧 Tool Recommendation Assistant Ready! Type 'exit' to quit.\n")
+        print("I can help you find the best tools for any development project!")
+        print("Try asking me about:")
+        print("- 'I need tools for web development'")
+        print("- 'Compare React vs Vue.js'")
+        print("- 'How do I set up Docker on Ubuntu?'")
+        print("- 'What are the best tools for data analysis?'\n")
         
         conversation = []
-        findings = {}  # Store findings by domain
         
         while True:
             user_input = input("You: ")
@@ -80,38 +98,14 @@ async def main():
             
             conversation.append({"role": "user", "content": user_input})
             
-            # Include findings in context
-            findings_summary = "\n".join([f"{domain}: {info}" for domain, info in findings.items()])
-            context = f"Previous findings:\n{findings_summary}\n\nRecent messages:\n"
-            context += "\n".join([f"{msg['role']}: {msg['content']}" for msg in conversation[-4:]])
+            # Build context from recent conversation
+            context = "Recent conversation:\n"
+            context += "\n".join([f"{msg['role']}: {msg['content']}" for msg in conversation[-6:]])
             
             result = await agent.run(f"{context}\n\nCurrent message: {user_input}")
-            print(f"\nBot: {result.output}\n")
+            print(f"\nAssistant: {result.output}\n")
             
-            # Extract domain and update findings (simple pattern matching)
-            if "Headers for" in result.output or "Security Header Analysis" in result.output:
-                import re
-                domain_match = re.search(r'headers for `?(?:https?://)?([a-zA-Z0-9.-]+)`?', result.output, re.IGNORECASE)
-                if domain_match:
-                    domain = domain_match.group(1)
-                    findings[domain] = findings.get(domain, "") + f"Headers checked (HSTS, CSP, etc). "
-            
-            if "Technologies detected" in result.output:
-                import re
-                # Match both "Technologies detected on URL:" and "No technologies detected"
-                domain_match = re.search(r'(?:technologies detected on |for )(?:https?://)?([a-zA-Z0-9.-]+)', result.output, re.IGNORECASE)
-                if domain_match:
-                    domain = domain_match.group(1)
-                    # Extract actual technologies found
-                    tech_count = len(re.findall(r'^- ', result.output, re.MULTILINE))
-                    findings[domain] = findings.get(domain, "") + f"Tech stack analyzed ({tech_count} found). "
-            
-            if "SSL Certificate Analysis" in result.output:
-                import re
-                domain_match = re.search(r'SSL Certificate Analysis for ([a-zA-Z0-9.-]+)', result.output)
-                if domain_match:
-                    domain = domain_match.group(1)
-                    findings[domain] = findings.get(domain, "") + "SSL cert checked. "
+            conversation.append({"role": "assistant", "content": result.output})
             
             conversation.append({"role": "assistant", "content": result.output})
 

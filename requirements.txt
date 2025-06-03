@@ -9,3 +9,4 @@ requests
 shcheck
 webtech
 google-generativeai
+dotenv
