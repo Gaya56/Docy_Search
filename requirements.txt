@@ -1,0 +1,11 @@
+pydantic-ai
+pydantic-ai[openai]
+pydantic-ai[anthropic]
+pydantic-ai[google-generativeai]
+mcp
+python-dotenv
+matplotlib
+requests
+shcheck
+webtech
+google-generativeai
