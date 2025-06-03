@@ -10,3 +10,5 @@ shcheck
 webtech
 google-generativeai
 dotenv
+aiohttp
+fastmcp

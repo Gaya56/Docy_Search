@@ -56,6 +56,16 @@ tool_recommendation_server = MCPServerStdio(
     ['tool_recommendation/mcp_server.py']
 )
 
+github_server = MCPServerStdio(
+    'python',
+    ['github_mcp_server.py']
+)
+
+tool_recommendation_server = MCPServerStdio(
+    'python',
+    ['tool_recommendation/mcp_server.py']
+)
+
 # Define the Agent with all MCP servers
 def create_agent_with_context(project_context=""):
     context_section = ""
@@ -84,6 +94,20 @@ CORE CAPABILITIES:
 - Compare multiple tools side-by-side with detailed analysis
 - Recommend complete tool workflows for specific tasks and projects
 - Support all development categories: web, mobile, desktop, database, devops, testing, design, data science, AI/ML, game development, security, productivity
+- Access GitHub repositories to find official code, examples, and implementation details
+
+GITHUB INTEGRATION:
+When users ask about specific tools or need implementation examples, you can:
+- Search GitHub for official repositories
+- Find and display relevant code examples
+- Show repository structure and key files
+- Provide direct links to GitHub repositories
+- Find implementation tutorials and examples
+
+**IMPORTANT**: Before accessing GitHub repositories, you MUST ask for user permission with this exact phrase:
+"I can search GitHub repositories for [specific purpose]. This will access public GitHub data to find official repositories and code examples. Continue? (y/n)"
+
+Only proceed with GitHub searches after explicit user confirmation.
 
 RECOMMENDATION APPROACH:
 When users ask about tools, provide comprehensive recommendations with:
@@ -94,6 +118,7 @@ When users ask about tools, provide comprehensive recommendations with:
 - Performance and scalability analysis
 - Integration capabilities with other tools
 - Learning curve assessment based on user skill level
+- Official GitHub repositories and code examples (with permission)
 
 INTERACTION STYLE:
 - Always ask clarifying questions about project requirements, skill level, and constraints
@@ -106,7 +131,7 @@ Your goal is to accelerate development productivity by connecting users with the
 
     return Agent(
         model, 
-        mcp_servers=[brave_server, python_tools_server, tool_recommendation_server],
+        mcp_servers=[brave_server, python_tools_server, tool_recommendation_server, github_server],
         retries=3,
         system_prompt=system_prompt
     )
