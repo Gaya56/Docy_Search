@@ -1,6 +1,6 @@
 # Intelligent Tool Recommendation System
 
-This project is a **modular, intelligent tool recommendation system** designed to assist developers, engineers, and technical professionals in discovering, analyzing, and installing the best development tools for their projects and workflows.
+This repository contains an intelligent, context-aware tool recommendation system designed to help developers discover, analyze, and implement the best technical tools for their specific projects. The system combines live web search (via Brave API), AI-powered analysis (via Gemini API), and GitHub repository integration to provide comprehensive tool recommendations with installation guides and official source code access. Built on a clean, modular architecture using Pydantic AI and the Model Context Protocol (MCP), it reads your project context from a markdown file to provide personalized suggestions based on your tech stack, budget constraints, and development goals. The chatbot interface asks for permission before accessing external APIs, searches for relevant tools, ranks them by relevance and reliability, finds their official GitHub repositories, and provides complete setup instructions - transforming the often overwhelming process of tool selection into an intelligent, streamlined workflow that understands your specific development needs.
 
 ## 🚀 Key Features
 
