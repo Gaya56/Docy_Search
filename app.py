@@ -9,6 +9,22 @@ from pydantic_ai.models.google import GoogleModel
 
 load_dotenv() # Call this at the beginning of your script
 
+def load_project_context():
+    """Load project context from project_context.md file"""
+    context_file = "project_context.md"
+    if os.path.exists(context_file):
+        try:
+            with open(context_file, 'r', encoding='utf-8') as f:
+                context = f.read()
+            print("📋 Project context loaded successfully!")
+            return context
+        except Exception as e:
+            print(f"⚠️ Warning: Could not load project context - {e}")
+            return ""
+    else:
+        print(f"ℹ️ No project context file found. Create '{context_file}' to provide project details.")
+        return ""
+
 # Use model based on environment variable
 model_type = os.getenv("AI_MODEL", "openai").lower()
 
@@ -41,11 +57,22 @@ tool_recommendation_server = MCPServerStdio(
 )
 
 # Define the Agent with all MCP servers
-agent = Agent(
-    model, 
-    mcp_servers=[brave_server, python_tools_server, tool_recommendation_server],
-    retries=3,
-    system_prompt="""You are an intelligent tool recommendation assistant specializing in:
+def create_agent_with_context(project_context=""):
+    context_section = ""
+    if project_context.strip():
+        context_section = f"""
+**PROJECT CONTEXT**
+The user has provided the following information about their current project:
+
+{project_context}
+
+Use this context to provide more targeted and relevant tool recommendations. Reference their current stack, challenges, goals, and constraints when making suggestions.
+
+---
+
+"""
+    
+    system_prompt = f"""{context_section}You are an intelligent tool recommendation assistant specializing in:
 
 **TOOL RECOMMENDATION & DISCOVERY**
 Your primary purpose is to help developers, engineers, and technical professionals discover, analyze, and implement the best tools for their projects and workflows.
@@ -76,18 +103,35 @@ INTERACTION STYLE:
 - Consider budget constraints and open-source alternatives
 
 Your goal is to accelerate development productivity by connecting users with the perfect tools for their specific needs."""
-)
+
+    return Agent(
+        model, 
+        mcp_servers=[brave_server, python_tools_server, tool_recommendation_server],
+        retries=3,
+        system_prompt=system_prompt
+    )
 
 # Main async function
 async def main():
+    # Load project context
+    project_context = load_project_context()
+    
+    # Create agent with context
+    agent = create_agent_with_context(project_context)
+    
     async with agent.run_mcp_servers():
         print("🔧 Tool Recommendation Assistant Ready! Type 'exit' to quit.\n")
-        print("I can help you find the best tools for any development project!")
-        print("Try asking me about:")
-        print("- 'I need tools for web development'")
-        print("- 'Compare React vs Vue.js'")
-        print("- 'How do I set up Docker on Ubuntu?'")
-        print("- 'What are the best tools for data analysis?'\n")
+        
+        if project_context.strip():
+            print("✅ I have your project context loaded and ready to help!")
+            print("Ask me anything about tools for your specific project.\n")
+        else:
+            print("I can help you find the best tools for any development project!")
+            print("Try asking me about:")
+            print("- 'I need tools for web development'")
+            print("- 'Compare React vs Vue.js'")
+            print("- 'How do I set up Docker on Ubuntu?'")
+            print("- 'What are the best tools for data analysis?'\n")
         
         conversation = []
         
@@ -104,8 +148,6 @@ async def main():
             
             result = await agent.run(f"{context}\n\nCurrent message: {user_input}")
             print(f"\nAssistant: {result.output}\n")
-            
-            conversation.append({"role": "assistant", "content": result.output})
             
             conversation.append({"role": "assistant", "content": result.output})
 
