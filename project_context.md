@@ -61,5 +61,21 @@ I'm building a task management web application for small teams. It's like a simp
 5. Database optimization tools for PostgreSQL
 6. Deployment and monitoring tools for small budget
 
+## Reference URLs & Documentation
+<!-- Add relevant URLs for additional context - GitHub repos, documentation, tutorials, etc. -->
+**Relevant Repositories:**
+- Current Project Repo: (e.g., https://github.com/yourusername/task-manager)
+- Inspiration/Reference: (e.g., https://github.com/trello/trello-board)
+
+**Documentation & Resources:**
+- Framework Docs: (e.g., https://react.dev/learn, https://nodejs.org/docs)
+- Deployment Guides: (e.g., https://vercel.com/docs, https://railway.app/docs)
+- Learning Resources: (e.g., specific tutorials, courses, or articles you're following)
+
+**Third-Party Services:**
+- Authentication: (e.g., https://auth0.com/docs, https://supabase.io/docs/guides/auth)
+- Database: (e.g., https://www.postgresql.org/docs/)
+- Hosting/Cloud: (e.g., AWS documentation, Azure docs, etc.)
+
 ---
-**Note:** This context helps the assistant provide targeted tool recommendations for my task management application.
+**Note:** This context helps the assistant provide targeted tool recommendations for my task management application. URLs provide additional context about your specific implementation approach and preferred documentation sources.
